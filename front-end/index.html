@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chapter Sense</title>
+    <!-- Add Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <style>
+        .modal-class {
+         position: fixed;
+         top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%) scale(0);
+          transition: 200ms ease-in-out;
+          background-color: #7baf8a;
+          border-radius: 10px;
+          width: 260px !important;
+          height: 245px;
+          padding: 10px 10px;
+         z-index: 10;
+
+  .title-modal {
+    font-weight: 600;
+    padding: 5px 5px;
+  }
+
+  .input-title {
+    display: flex;
+    width: 240px;
+    padding: 10px;
+    margin-top: 5px;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+  }
+
+  .modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+
+    .modal-button {
+      background-color: #d9d9d9;
+      border: none;
+      width: 80px;
+      border-radius: 10px;
+      height: 40px;
+    }
+  }
+
+  .radio-options{
+    display: flex; 
+    justify-content: space-between !important;
+  }
+}
+
+.active {
+  transform: translate(-50%, -50%) scale(1);
+}
+        body {
+            background-color: #eccd7c;
+        }
+
+        .btn-fetch {
+            margin-top: 20px;
+        }
+
+        .img {
+            width: 500px;
+            height: 170px;
+        }
+
+        .btn {
+            background-color: #7BAF8A;
+            border: 2px solid #7BAF8A;
+            color: #ffffff;
+            padding: 10px;
+            border-radius: 30px;
+            font-size: 25px;
+            width: 300px;
+            font-weight: bold;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 10px 36px 0px, rgba(0, 0, 0, 0.06) 0px 0px 0px 1px;
+        }
+
+        .btn:hover {
+            background-color: transparent;
+            border: 2px solid #78ac87;
+            color: #78ac87;
+        }
+
+        #spinner_overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Semi-transparent black overlay */
+            align-items: center;
+            justify-content: center;
+        }
+        .overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 6;
+}
+    </style>
+</head>
+
+<body>
+    <div class="m-auto d-flex" style="height: 100vh;">
+        <div class="d-flex m-auto w-100">
+            <div class="container text-center">
+                <img src="./assets/logo.png" class="img" />
+                <div class="row" style="justify-content: center; align-items: center;">
+                    <div class="col-6 d-flex" style="justify-content:end">
+                        <button class="custom-assist-button btn btn-block"
+                            onclick="" id="assist_button">Assist-modus</button>
+                    </div>
+                    <div class="col-6 d-flex" style="justify-content:start">
+                        <button class="custom-auto-button btn btn-secondary btn-block"
+                            onclick="goTo('src/screens/autoModeScreen.html')">Auto-modus</button>
+                    </div>
+                    <div class="overlay" id="overlay"></div>
+                    <div id="spinner_overlay">
+                        <div id="spinner" class="spinner-border my-4 text-warning" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                    <div class="modal-class" id="key" style="height: fit-content;">
+        
+                        <div class="title-modal">Sie sollten mindestens einen API-Schlüssel bereitstellen</div>
+                        <div>
+                          <input class="input-title" type="text" id="firstKey" placeholder=" API key" />
+                        </div>
+                        <div>
+                            <input class="input-title" type="text" id="secondKey" placeholder="API key" />
+                          </div>
+                          <div>
+                            <input class="input-title" type="text" id="thirdKey" placeholder="API key" />
+                          </div>
+                        
+                        <div class="modal-buttons">
+                          <button class="modal-button" key-cancel-button>Cancel</button>
+                          <button class="modal-button" key-ok-button disabled>OK</button>
+                        </div>
+                      </div> 
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const button = document.getElementById('assist_button');
+        console.log(button);
+        button.addEventListener('click', handleClick);
+      function handleClick() {
+        const modal = document.getElementById("key");
+        console.log("lenna jet");
+        modal.classList.add("active");
+        overlay.style.display = 'block';
+
+        const okButton = modal.querySelector("[key-ok-button]");
+        const inputFields = document.querySelectorAll(".input-title");
+        document.getElementById("firstKey").value=localStorage.getItem("firstKey");
+        
+
+        document.getElementById("secondKey").value=localStorage.getItem("secondKey");
+        document.getElementById("thirdKey").value=localStorage.getItem("thirdKey");
+        inputFields.forEach(input => {
+          
+              const atLeastOneFilled = Array.from(inputFields).some(input => 
+              input.value.trim() !== "" && input.value.length > 10 );
+              okButton.disabled = !atLeastOneFilled;
+              input.addEventListener("input", () => {
+                const atLeastOneFilled = Array.from(inputFields).some(input => 
+                input.value.trim() !== "" && input.value.length == 51 );
+                okButton.disabled = !atLeastOneFilled;
+            });
+      });
+        
+
+        okButton.addEventListener("click", function() {
+        // Get the value of the first input field
+        const apiKeys = [];
+        localStorage.setItem("firstKey", document.getElementById("firstKey").value);
+        localStorage.setItem("secondKey", document.getElementById("secondKey").value);
+        localStorage.setItem("thirdKey", document.getElementById("thirdKey").value);
+
+        inputFields.forEach(input => {
+            
+            const apiKeyValue = input.value;
+            if (apiKeyValue.trim() !== "") {
+                apiKeys.push(apiKeyValue);
+            }
+        });
+        // Send the value to the backend using AJAX or fetch
+        // Replace this with your actual backend endpoint
+
+        axios.post("http://127.0.0.1:5000/api/receive_key", {
+      keys: apiKeys
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => {
+        console.log(response.data);
+      return response.data;
+    })
+    .then(data => {
+      modal.classList.remove('active');
+      console.log('bdet!');
+      overlay.style.display = 'none';
+
+      spinner_overlay.style.display = 'flex';
+      axios.get('http://127.0.0.1:5000/api/hello')
+        .then(response => {
+          spinner_overlay.style.display = 'none';
+          window.location.href = 'src/screens/assistModeScreen.html';
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    })
+    .catch(error => {
+console.log(error) ;   });
+  });
+        const cancelButton = modal.querySelector("[key-cancel-button]");
+        cancelButton.addEventListener("click", () => {
+            // Close the modal without proceeding
+            modal.classList.remove("active");
+            console.log("canceled !");
+            overlay.style.display = 'none';
+            width = 0;
+            height = 0;
+        });
+    
+}
+
+
+
+    </script>
+
+    <!-- Add Bootstrap JavaScript dependencies (Optional, if you need JS components) -->
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,12 @@
+/.idea/
+/back-end/venv/
+/back-end/.idea/
+/back-end/tmp/
+/back-end/htmls/
+/back-end/txts/
+/back-end/rtfs/
+/back-end/pdfs/
+/back-end/progress.json
+/front-end/node_modules/
+/front-end/package-lock.json
+/back-end/__pycache__/

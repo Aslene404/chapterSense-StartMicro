@@ -1,0 +1,9 @@
+Flask[async]==2.3.2
+openai==0.27.8
+PyMuPDF==1.22.5
+pdfkit==1.0.0
+Pillow==10.0.0
+Pillow==10.0.0
+pypandoc==1.11
+pypandoc_binary==1.11
+pytesseract==0.3.10

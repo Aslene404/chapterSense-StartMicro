@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Assistenzmodus</title>
+  <!-- Importing the PDF.js library -->
+  <link rel="stylesheet" href="../styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+</head>
+
+<body class="main_content">
+  <div class="full-height h-100">
+    <div class=" d-flex align-items-center " style="height: 10%; display: flex; justify-content: center; ">
+      <div class="d-flex align-items-center justify-content-around ">
+        <label for="pdfInput" class="btn upload-button m-0">
+          <i class="fas fa-upload"></i> Original
+        </label>
+      </div>
+      <div class="d-flex align-items-center justify-content-around " style="margin: 0px 16.5%;">
+        <button id="run_button">
+          <img id="run_button_image" src="../../assets/runMan.png" class="img m-0"/>
+        </button>
+
+          <button id="restart_button" onclick="" class="img m-0 restartButton"
+          disabled
+
+          >
+            <img src="../../assets/reload.svg" width="30px" height="30px" />
+          </button>
+        
+      </div>
+      <div class="d-flex align-items-center justify-content-around ">
+        <div class="dropdown m-0">
+          <button class="btn skript-button dropdown-toggle" type="button" id="dropdownMenuButton1"
+            data-bs-toggle="dropdown" aria-expanded="false" disabled><i class="fas fa-download"></i>
+            Skript
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li><a id="createPDF" class="dropdown-item">export as PDF</a></li>
+            <li><a id="createTXT" class="dropdown-item">export as rtf</a></li>
+          </ul>
+        </div>
+        
+      </div>
+    </div>
+    <div style="width: 100%; height: 85%;" class="row px-3 pb-3 m-0">
+      <div class="col-md-6 text-center h-100" style="height: vh; position: relative;">
+        <input type="file" id="pdfInput" accept=".pdf" style="display:none">
+        <div id="pdfContainer" class="h-100" style="overflow-y: auto; background-color: rgba(0, 0, 0, 0.15);">
+        </div>
+        <div id="zoomButtons" style="display: none;">
+          <button id="zoomInButton" style="    background:none ;">
+            <i class="fas fa-search-plus" style="font-size: 20px;"></i>
+          </button>
+          <button id="zoomOutButton" style="  margin:0 15%; background:none ;">
+            <i class="fas fa-search-minus" style="font-size: 20px;"></i>
+          </button>
+          <button id="resetZoomButton" style=" background:none ;">
+            <i class="fas fa-expand" style="font-size: 20px;"></i>
+          </button>
+        </div>
+      </div>
+      <div class="modal-class" id="modal" style="height: fit-content;">
+        <div style="display: flex; justify-content: space-between">
+          <label for="imageCheckbox">
+            <input type="checkbox" id="imageCheckbox" /> Image
+          </label>
+          <label for="exkursCheckbox">
+            <input type="checkbox" id="exkursCheckbox" /> Exkurs
+          </label>
+        </div>
+        <div class="title-modal">Bitte einen Titel eingeben</div>
+        <div>
+          <input class="input-title" type="text" id="textInput" placeholder="Select or enter text" />
+          <datalist id="options"> </datalist>
+        </div>
+        <div class="title-modal" id="textTitle">Text-Size</div>
+        <div  id="titleOptions">
+          <label>
+            <input type="radio" name="titleOption" value="h3" /> Small
+          </label>
+          <label style="margin: 0px 10%;" >
+            <input type="radio" name="titleOption" value="h2" checked="checked" /> Medium
+          </label>
+          <label>
+            <input type="radio" name="titleOption" value="h1" /> Big
+          </label>
+        </div>
+        <div class="title-modal" id="summaryTitle">Textzusammenfassung-Quote</div>
+        <div id="summaryOptions">
+          <label>
+            <input type="radio" name="summaryOption" value="30" checked="checked" /> 30%
+          </label>
+          <label style="margin: 0px 15%;" >
+            <input type="radio" name="summaryOption" value="50" /> 50%
+          </label>
+          <label>
+            <input type="radio" name="summaryOption" value="70" /> 70%
+          </label>
+        </div>
+        <div class="title-modal" id="imageTitle" style="display: none;">Bildposition</div>
+        <div  id="imageOptions" style="display: none; ">
+          <label>
+            <input type="radio" name="imageOption" value="left" /> Left
+          </label>
+          <label style="margin: 0px 10%;" >
+            <input type="radio" name="imageOption" value="middle" checked="checked" /> Middle
+          </label>
+          <label>
+            <input type="radio" name="imageOption" value="Right" /> Right
+          </label>
+        </div>
+        <div class="modal-buttons">
+          <button class="modal-button" data-cancel-button>Cancel</button>
+          <button class="modal-button" data-ok-button>OK</button>
+        </div>
+      </div> 
+      <div class="modal-class" id="alert" style="height: fit-content;">
+
+        <div class="modal-title">Sind Sie sicher, dass Sie Ihre Arbeit löschen möchten?</div>
+      
+        <div class="modal-buttons">
+          <button class="modal-button" alert-cancel-button>Cancel</button>
+          <button class="modal-button" style="color: red;" alert-ok-button>OK</button>
+        </div>
+      </div>
+      <div class="overlay" id="overlay"></div>
+      <div id="spinner_overlay">
+        <div id ="spinner"class="spinner-border text-bg-dark" style="width: 3rem; height: 3rem;" role="status">          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+      <div class="col-md-6 h-100 text-center">
+        <div id="container" class="h-100 d-flex "
+          style="overflow-y: auto;background-color: rgba(0, 0, 0, 0.15); justify-content: center;" contenteditable="true" >
+          <div class="text-start p-3" id="responseContainer" >
+          </div>
+          <canvas id="selectionCanvas" style="position: absolute; top: 0; left: 0; pointer-events: none;"></canvas>
+        </div>
+      </div>
+    </div>
+    <footer style="height:5.5%">
+      <p>Status-Bar</p>
+
+      <div id="spinner_over">
+        <div id="spinner" class="spinner-border" style="width: 2rem; height: 2rem;" role="status">
+        <span class="sr-only">Loading...</span>
+        </div>
+    </footer>
+  </div>
+  <script src="../rendu.js"></script>
+</body>
+
+</html>
